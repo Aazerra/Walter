@@ -4,7 +4,7 @@ import argparse
 import virtualenv
 import logging
 from charondb import MySQLManager, LiteManager
-from walter.types import Config, Database, Project
+from .lib.types import Config, Database, Project
 from tabulate import tabulate
 
 BASE_DIR = os.environ['HOME']
