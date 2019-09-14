@@ -1,0 +1,2 @@
+tabulate==0.8.3
+virtualenv==16.7.5

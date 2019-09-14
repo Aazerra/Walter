@@ -1,0 +1,14 @@
+{
+  "init": false,
+  "project_dir": ".projects",
+  "complete_dir": "Projects/completed",
+  "incomplete_dir": "Projects/incomplete",
+  "database": {
+    "driver": "mysql",
+    "name": "database",
+    "username": "root",
+    "password": "example",
+    "host": "localhost",
+    "port": 3306
+  }
+}
