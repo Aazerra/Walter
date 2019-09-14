@@ -1,6 +1,6 @@
 # Walter
 
-![Language](https://img.shields.io/github/languages/top/TahaPY/Walter.svg?style=for-the-badge&logo=language) ![RepoSize](https://img.shields.io/github/repo-size/TahaPY/Walter.svg?style=for-the-badge&logo=size) ![Latest Tag](https://img.shields.io/github/tag/LinArcX/Trinity.svg?style=for-the-badge&logo=tag)![GitHub](https://img.shields.io/github/license/tahapy/walter?style=for-the-badge)
+![Language](https://img.shields.io/github/languages/top/TahaPY/Walter.svg?style=for-the-badge&logo=language) ![RepoSize](https://img.shields.io/github/repo-size/TahaPY/Walter.svg?style=for-the-badge&logo=size) ![Latest Tag](https://img.shields.io/github/tag/LinArcX/Trinity.svg?style=for-the-badge&logo=tag) ![License](https://img.shields.io/github/license/tahapy/walter?style=for-the-badge)
 
 ## Installation
 
