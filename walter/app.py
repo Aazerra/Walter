@@ -6,6 +6,7 @@ import logging
 from charondb import MySQLManager, LiteManager
 from .lib.types import Config, Database, Project
 from tabulate import tabulate
+import subprocess
 
 BASE_DIR = os.environ['HOME']
 if not os.path.exists(f'{BASE_DIR}/.config/walter.json'):
@@ -90,11 +91,18 @@ class Walter:
             projects_list.append(list(Project(project)))
         print(tabulate(projects_list, columns, "fancy_grid"))
 
+    def create_symlink(self, path, name):
+        self.logger.info("Creating symlink")
+        dist = os.path.join(BASE_DIR, getattr(
+            self.config, "incomplete_dir"), name)
+        if os.path.exists(dist):
+            self.logger.warning("Symlink is Exists")
+        else:
+            os.symlink(path, dist)
     def create(self):
         language, name = self.ARGS.language, self.ARGS.project
-
+        path = os.path.join(self.PROJECT_BASE_DIR, name)
         def python():
-            path = os.path.join(self.PROJECT_BASE_DIR, name)
             venv = os.path.join(path, "venv")
             if not os.path.exists(path):
                 self.logger.info("Creating project Directory")
@@ -103,18 +111,17 @@ class Walter:
                 self.logger.warning("project Directory Exists")
             self.logger.info("Creating project Virtualenv")
             virtualenv.create_environment(venv)
-            self.logger.info("Creating symlink")
-            dist = os.path.join(BASE_DIR, getattr(
-                self.config, "incomplete_dir"), name)
-            if os.path.exists(dist):
-                self.logger.warning("Symlink is Exists")
-            else:
-                os.symlink(path, dist)
-            self.logger.info("Created")
             return True
 
         def node():
-            pass
+            if not os.path.exists(path):
+                self.logger.info("Creating Project Directory")
+                os.makedirs(path)
+            else:
+                self.logger.warning("Project Directory Exists")
+            self.logger.info("Yarn init")
+            subprocess.Popen(['yarn', 'init', '-y'], shell=False, cwd=path).wait()
+            return True
 
         def go():
             pass
@@ -127,8 +134,10 @@ class Walter:
 
         if not self.storage.exists("project_tbl", f'name="{name}"'):
             if locals()[language]():
+                self.create_symlink(path, name)
                 self.storage.insert("project_tbl", ['name', 'language', "complete"],
                                     [name, language, 0])
+                self.logger.info("Created")
         else:
             self.logger.error("Project is EXISTS in database!")
 
