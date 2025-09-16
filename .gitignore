@@ -2,3 +2,16 @@ venv
 .pyc
 __pycache__
 *.egg*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
