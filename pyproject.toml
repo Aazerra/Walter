@@ -1,0 +1,42 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "walter"
+version = "0.1.0"
+description = "Walter is a Project Manager and Project generator"
+authors = ["Mohammad Taha (TahaPY) <taha@cerberusteam.ir>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "walter"}]
+homepage = "https://github.com/Aazerra/Walter"
+repository = "https://github.com/Aazerra/Walter"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+tabulate = "^0.9.0"
+virtualenv = "^20.0.0"
+charondb = {git = "https://github.com/tahapy/CharonDB.git"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0.0"
+black = "^23.0.0"
+isort = "^5.12.0"
+mypy = "^1.0.0"
+
+[tool.poetry.scripts]
+walter = "walter.app:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

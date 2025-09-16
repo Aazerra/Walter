@@ -3,21 +3,28 @@ import shutil
 import argparse
 import virtualenv
 import logging
+from pathlib import Path
 from charondb import MySQLManager, LiteManager
 from .lib.types import Config, Database, Project
 from tabulate import tabulate
 import subprocess
 
 BASE_DIR = os.environ['HOME']
-if not os.path.exists(f'{BASE_DIR}/.config/walter.json'):
-    shutil.copyfile('./config.json', f'{BASE_DIR}/.config/walter.json')
+PACKAGE_DIR = Path(__file__).parent
+CONFIG_TEMPLATE = PACKAGE_DIR / 'config.json'
+USER_CONFIG = Path(BASE_DIR) / '.config' / 'walter.json'
+
+if not USER_CONFIG.exists():
+    USER_CONFIG.parent.mkdir(parents=True, exist_ok=True)
+    if CONFIG_TEMPLATE.exists():
+        shutil.copyfile(str(CONFIG_TEMPLATE), str(USER_CONFIG))
 
 
 class Walter:
     def __init__(self):
         self.PARSE = self.__create_parser()
         self.ARGS = self.PARSE.parse_args()
-        self.config = Config(f'{BASE_DIR}/.config/walter.json')
+        self.config = Config(str(USER_CONFIG))
         self.PROJECT_BASE_DIR = os.path.join(
             BASE_DIR, self.config.project_dir)
         self._init_database()
@@ -37,14 +44,18 @@ class Walter:
             self.storage = MySQLManager(username=db.username, password=db.password,
                                         host=db.host, database=db.name, port=db.port, debug=self.ARGS.debug)
         else:
-            self.storage = LiteManager("")
+            # For now, use a simple wrapper for LiteManager
+            from .lib.db_wrapper import SimpleLiteWrapper
+            self.storage = SimpleLiteWrapper(db.name or "walter.db")
         if not self.config.init:
             if db.driver == "mysql":
-                with open("./database.sql", "r") as sql_file:
-                    self.storage.import_database(sql_file)
-                    sql_file.close()
+                database_sql = PACKAGE_DIR / "database.sql"
+                if database_sql.exists():
+                    with open(str(database_sql), "r") as sql_file:
+                        self.storage.import_database(sql_file)
             else:
-                pass
+                # Initialize SQLite database
+                self.storage.init_database()
 
     def _init_logger(self, debug):
         self.logger = logging.Logger("Walter")
@@ -110,7 +121,11 @@ class Walter:
             else:
                 self.logger.warning("project Directory Exists")
             self.logger.info("Creating project Virtualenv")
-            virtualenv.create_environment(venv)
+            # Use modern virtualenv API
+            import subprocess
+            subprocess.run([
+                "python", "-m", "virtualenv", venv
+            ], check=True)
             return True
 
         def node():
